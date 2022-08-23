@@ -1,22 +1,12 @@
 package com.springbootweb.bootweb.controller;
 
-import com.springbootweb.bootweb.formatter.PersonFormatter;
-import org.junit.jupiter.api.BeforeEach;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import java.nio.charset.StandardCharsets;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -36,11 +26,28 @@ class SampleControllerTest {
     @Test
     public void hello() throws Exception {
 
-        mockMvc.perform(get("/hello/bbung"))
+        mockMvc.perform(get("/hello").param("name", "bbung"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("hello bbung"));
+    }
 
+    @Test
+    public void helloStatic() throws Exception{
+        mockMvc.perform(get("/mobile/index.html"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(Matchers.containsString("hello index")))
+                .andExpect(header().exists(HttpHeaders.CACHE_CONTROL));
+    }
+
+    @Test
+    public void stringMessage() throws Exception{
+        mockMvc.perform(get("/message")
+                .content("hello"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("hello"));
     }
 
 }
