@@ -1,5 +1,6 @@
 package com.springbootweb.bootwebmvc.controller;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,6 +22,7 @@ class SampleControllerTest {
     private MockMvc mockMvc;
 
     @Test
+    @DisplayName("URL 테스트")
     public void helloTest() throws Exception {
         mockMvc.perform(get("/hello")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -28,5 +30,14 @@ class SampleControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("hello"));
+    }
+
+    @Test
+    @DisplayName("Matrix 테스트")
+    public void matrixTest() throws Exception{
+
+        mockMvc.perform(get("/matrix/1;name=bbung;name2=nice"))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 }
