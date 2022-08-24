@@ -7,11 +7,13 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Controller
+@SessionAttributes("event")
 public class SampleController {
 
     @GetHelloMapping
@@ -31,23 +33,41 @@ public class SampleController {
         return event;
     }
 
-    @GetMapping("valid")
-    public String valid(Model model){
+    @GetMapping("valid/form/name")
+    public String validFormName(Model model){
 
-        Event event = new Event();
-        event.setLimit(0);
-        model.addAttribute("event", event);
+        model.addAttribute("event", new Event());
+        // @SessionAttributes("event")의 명시된 name으로 Model에 넣을시 Session Scope에 저장한다.
 
-        return "valid/form";
+        return "valid/form-name";
     }
 
-    @PostMapping("valid")
-    public String valid(@Validated @ModelAttribute Event event, BindingResult bindingResult){
+    @PostMapping("valid/form/name")
+    public String validNameSubmit(@Validated @ModelAttribute Event event,
+                        BindingResult bindingResult){
         
         if(bindingResult.hasErrors()){
-            bindingResult.getAllErrors().forEach(item -> System.out.println("item = " + item));
-            return "valid/form";
+            return "valid/form-name";
         }
+        return "redirect:/valid/form/limit";
+    }
+
+    @GetMapping("valid/form/limit")
+    public String validFormLimit(@ModelAttribute Event event, Model model){
+        model.addAttribute("event", event);
+
+        return "valid/form-limit";
+    }
+
+    @PostMapping("valid/form/limit")
+    public String validLimitSubmit(@Validated @ModelAttribute Event event,
+                             BindingResult bindingResult,
+                             SessionStatus status){
+
+        if(bindingResult.hasErrors()){
+            return "valid/form-limit";
+        }
+        status.setComplete();
 
         return "redirect:/valid/list";
     }
