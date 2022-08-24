@@ -24,57 +24,57 @@ class ExampleControllerTest {
     private MockMvc mockMvc;
     
     @Test
-    public void getEvents() throws Exception {
+    public void getExample() throws Exception {
 
-        mockMvc.perform(get("/events"))
+        mockMvc.perform(get("/example"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string("GET /events"));
+                .andExpect(content().string("GET /example"));
     }
 
     @Test
-    public void getEventsId() throws Exception {
+    public void getExampleId() throws Exception {
 
         int id = 1;
 
-        mockMvc.perform(get("/events/" + id))
+        mockMvc.perform(get("/example/" + id))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string("GET /events/" + id));
+                .andExpect(content().string("GET /example/" + id));
     }
 
     @Test
-    public void postEvents() throws Exception{
+    public void postExample() throws Exception{
 
-        mockMvc.perform(post("/events")
+        mockMvc.perform(post("/example")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string("POST /events"));
+                .andExpect(content().string("POST /example"));
     }
 
     @Test
-    public void deleteEvents() throws Exception{
+    public void deleteExample() throws Exception{
 
         int id = 1;
 
-        mockMvc.perform(delete("/events/" + id))
+        mockMvc.perform(delete("/example/" + id))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string("DELETE /events/" + id));
+                .andExpect(content().string("DELETE /example/" + id));
     }
 
     @Test
-    public void putEvents() throws Exception{
+    public void putExample() throws Exception{
 
         int id = 1;
 
-        mockMvc.perform(put("/events/" + id)
+        mockMvc.perform(put("/example/" + id)
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string("PUT /events/" +id));
+                .andExpect(content().string("PUT /example/" +id));
     }
 }

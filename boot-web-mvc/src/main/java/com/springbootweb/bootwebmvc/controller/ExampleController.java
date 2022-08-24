@@ -5,38 +5,38 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("events")
+@RequestMapping("example")
 public class ExampleController {
 
     @GetMapping
-    public String getEvents(){
+    public String getExample(){
 
-        return "GET /events";
+        return "GET /example";
     }
 
     @GetMapping("{id}")
-    public String getEvents(@PathVariable int id){
+    public String getExample(@PathVariable int id){
 
-        return "GET /events/" + id;
+        return "GET /example/" + id;
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public String postEvents(){
+    public String postExample(){
 
-        return "POST /events";
+        return "POST /example";
     }
 
     @DeleteMapping("{id}")
-    public String deleteEvents(@PathVariable int id){
+    public String deleteExample(@PathVariable int id){
 
-        return "DELETE /events/" + id;
+        return "DELETE /example/" + id;
     }
 
     @PutMapping(value = "{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public String putEvents(@PathVariable int id){
+    public String putExample(@PathVariable int id){
 
-        return "PUT /events/" + id;
+        return "PUT /example/" + id;
     }
 }
