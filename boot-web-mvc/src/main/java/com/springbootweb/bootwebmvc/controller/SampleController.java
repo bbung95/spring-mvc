@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,8 +74,10 @@ public class SampleController {
     }
 
     @GetMapping("valid/list")
-    public String validList(Model model){
+    public String validList(Model model, @SessionAttribute LocalDateTime visitTime){
 
+        System.out.println("visitTime = " + visitTime);
+        
         Event event = new Event();
         event.setName("bbung");
         event.setLimit(10);
