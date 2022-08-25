@@ -45,7 +45,6 @@ public class FileController {
 
         Resource resource = resourceLoader.getResource(PATH + filename);
         File file = resource.getFile();
-
         String mediaType = new Tika().detect(file);
 
         return ResponseEntity.ok()
