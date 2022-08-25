@@ -1,14 +1,15 @@
 package com.springbootweb.bootwebmvc.controller;
 
 import com.springbootweb.bootwebmvc.entity.Event;
+import com.springbootweb.bootwebmvc.exception.EventException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,7 +19,27 @@ import java.util.List;
 @SessionAttributes("event")
 public class SampleController {
 
-    
+    @ExceptionHandler({EventException.class, RuntimeException.class})
+    public String sampleErrorHandler(RuntimeException exception, Model model){
+        model.addAttribute("message", "Runtime Message");
+        return "error/error";
+    }
+
+    @InitBinder()
+    public void initSampleBinder(WebDataBinder webDataBinder){
+        webDataBinder.setDisallowedFields("id");
+    }
+
+    @ModelAttribute("categories")
+    public List<String> categories(){
+
+        List<String> categories = new ArrayList<>();
+        categories.add("study");
+        categories.add("book");
+        categories.add("seminar");
+
+        return categories;
+    }
 
     @GetHelloMapping
     @ResponseBody
@@ -40,10 +61,12 @@ public class SampleController {
     @GetMapping("valid/form/name")
     public String validFormName(Model model){
 
-        model.addAttribute("event", new Event());
+        throw new EventException();
+
+//        model.addAttribute("event", new Event());
         // @SessionAttributes("event")의 명시된 name으로 Model에 넣을시 Session Scope에 저장한다.
 
-        return "valid/form-name";
+//        return "valid/form-name";
     }
 
     @PostMapping("valid/form/name")
