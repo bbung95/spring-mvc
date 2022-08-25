@@ -18,6 +18,8 @@ import java.util.List;
 @SessionAttributes("event")
 public class SampleController {
 
+    
+
     @GetHelloMapping
     @ResponseBody
     public String hello(){
