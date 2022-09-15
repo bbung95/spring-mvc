@@ -1,6 +1,8 @@
 package com.springbootweb.bootwebmvc.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springbootweb.bootwebmvc.dto.UserResponseDto;
 import com.springbootweb.bootwebmvc.service.UserService;
 import com.springbootweb.bootwebmvc.view.UserJsonView;
@@ -19,10 +21,26 @@ public class ApiUserController {
     @Autowired
     private UserService userService;
 
+//    @GetMapping("{id}")
+//    @JsonView(UserJsonView.UserView.class)
+//    public UserResponseDto getUserDetail(@PathVariable String id){
+//
+//        UserResponseDto user = userService.findUser(id);
+//
+//        System.out.println("user = " + user);
+//
+//        return user;
+//    }
+
     @GetMapping("{id}")
-    @JsonView(UserJsonView.UserView.class)
-    public UserResponseDto getUserDetail(@PathVariable String id){
-        return userService.findUser(id);
+    public Object getUserDetail(@PathVariable String id) throws JsonProcessingException {
+
+        UserResponseDto user = userService.findUser(id);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonData = objectMapper.writerWithView(UserJsonView.UserView.class).writeValueAsString(user);
+
+        return objectMapper.readValue(jsonData, Object.class);
     }
 
     @GetMapping("{id}/admin")

@@ -105,4 +105,18 @@ public class UserResponseDto {
     public void setModifiedDate(LocalDateTime modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
+
+    @Override
+    public String toString() {
+        return "UserResponseDto{" +
+                "userId='" + userId + '\'' +
+                ", password='" + password + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", createDate=" + createDate +
+                ", modifiedDate=" + modifiedDate +
+                '}';
+    }
 }

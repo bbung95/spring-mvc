@@ -36,28 +36,18 @@ public class ApiUserFilterController {
         return JsonFilterUtil.filterJsonData(user, field, "UserFilter");
     }
 
-//    @GetMapping
-//    public MappingJacksonValue getUserList(@RequestParam String field){
-//        List<UserFilterResponseDto> list = userService.findUserFilterList();
-//
-//        PropertyFilter filter = SimpleBeanPropertyFilter
-//                .filterOutAllExcept(field.split(","));
-//
-//        FilterProvider filters = new SimpleFilterProvider().addFilter("UserFilter", filter);
-//        MappingJacksonValue mapping = new MappingJacksonValue(list);
-//        mapping.setFilters(filters);
-//
-//        return mapping;
-//    }
-
     @GetMapping
-    public  List<UserFilterResponseDto> getUserList(@RequestParam String field){
-
-        System.out.println("field = " + field);
-
+    public MappingJacksonValue getUserList(@RequestParam String field){
         List<UserFilterResponseDto> list = userService.findUserFilterList();
 
-        return list;
+        PropertyFilter filter = SimpleBeanPropertyFilter
+                .filterOutAllExcept(field.split(","));
+
+        FilterProvider filters = new SimpleFilterProvider().addFilter("UserFilter", filter);
+        MappingJacksonValue mapping = new MappingJacksonValue(list);
+        mapping.setFilters(filters);
+
+        return mapping;
     }
 
     @GetMapping("{id}/modified")
