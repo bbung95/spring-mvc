@@ -1,4 +1,4 @@
-package com.spring.aop;
+package com.spring.null_safe;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -6,15 +6,13 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 //@Component
-public class AoPRunner implements ApplicationRunner {
+public class SafeRunner implements ApplicationRunner {
 
     @Autowired
-    private AoPService aoPService;
+    private SafeService safeService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-
-        aoPService.createEvent();
-        aoPService.publishEvent();
+        safeService.createEvent(null);
     }
 }

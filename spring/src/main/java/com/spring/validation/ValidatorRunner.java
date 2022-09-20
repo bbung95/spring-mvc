@@ -13,11 +13,11 @@ public class ValidatorRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         Event event = new Event();
 
-//        EventValidator eventValidator = new EventValidator();
+        EventValidator eventValidator = new EventValidator();
 
         Errors error = new BeanPropertyBindingResult(event, "event");
 
-//        eventValidator.validate(event, error);
+        eventValidator.validate(event, error);
 
         System.out.println("error.hasErrors() = " + error.hasErrors());
 
@@ -25,6 +25,7 @@ public class ValidatorRunner implements ApplicationRunner {
             System.out.println("===== error code =====");
             System.out.println("e = " + e.getCode());
             System.out.println(e.getDefaultMessage());
+            System.out.println(e.getObjectName());
         });
     }
 }
