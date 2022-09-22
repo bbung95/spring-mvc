@@ -1,10 +1,11 @@
 package com.spring.rest.events.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spring.rest.events.dto.EventDto;
 import com.spring.rest.events.domain.Event;
+import com.spring.rest.events.enums.EventStatus;
 import com.spring.rest.events.repository.EventRepository;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -14,10 +15,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -37,6 +36,33 @@ class EventControllerTest {
     @Test
     public void createEventsTest() throws Exception {
 
+        EventDto event = EventDto.builder()
+                .name("Spring")
+                .description("Rest Api Development with Spring")
+                .beginEventDateTime(LocalDateTime.of(2022, 9, 21, 12, 12))
+                .closeEnrollmentDateTime(LocalDateTime.of(2022, 9, 21, 12, 12))
+                .beginEnrollmentDateTime(LocalDateTime.of(2022, 9, 21, 12, 12))
+                .endEventDateTime(LocalDateTime.of(2022, 9, 21, 12, 12))
+                .basePrice(100)
+                .maxPrice(200)
+                .limitOfEnrollment(100)
+                .location("선릉역 위워크")
+                .build();
+
+        mockMvc.perform(post("/api/events")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaTypes.HAL_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(event)))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("id").exists())
+                .andExpect(header().exists(HttpHeaders.LOCATION))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE));
+    }
+
+    @Test
+    public void createEventsTest_BAD_REQUEST() throws Exception {
+
         Event event = Event.builder()
                 .name("Spring")
                 .description("Rest Api Development with Spring")
@@ -48,19 +74,19 @@ class EventControllerTest {
                 .maxPrice(200)
                 .limitOfEnrollment(100)
                 .location("선릉역 위워크")
+                .free(true)
+                .offline(false)
+                .eventStatus(EventStatus.PUBLISHED)
                 .id(100)
                 .build();
 
-        Mockito.when(eventRepository.save(event)).thenReturn(event);
+//        Mockito.when(eventRepository.save(event)).thenReturn(event);
 
         mockMvc.perform(post("/api/events")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaTypes.HAL_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(event)))
                 .andDo(print())
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("id").exists())
-                .andExpect(header().exists(HttpHeaders.LOCATION))
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE));
+                .andExpect(status().isBadRequest());
     }
 }

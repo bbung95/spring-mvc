@@ -1,6 +1,7 @@
 package com.spring.rest.events.controller;
 
 import com.spring.rest.events.domain.Event;
+import com.spring.rest.events.dto.EventDto;
 import com.spring.rest.events.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +28,11 @@ public class EventController {
     private final EventRepository eventRepository;
 
     @PostMapping
-    public ResponseEntity createEvents(@RequestBody Event event){
+    public ResponseEntity createEvents(@RequestBody EventDto event){
 
-        Event save = eventRepository.save(event);
+//        Event save = eventRepository.save(event);
 
-        URI uri = linkTo(methodOn(EventController.class).createEvents(event)).slash(save.getId()).toUri();
+        URI uri = linkTo(methodOn(EventController.class).createEvents(event)).slash("{id}").toUri();
 
         return ResponseEntity.created(uri).body(event);
     }
