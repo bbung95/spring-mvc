@@ -3,25 +3,23 @@ package com.spring.rest.events.controller;
 import com.spring.rest.events.domain.Event;
 import com.spring.rest.events.dto.EventDto;
 import com.spring.rest.events.repository.EventRepository;
+import com.spring.rest.events.valid.EventValidator;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.net.URI;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Controller
 @RequiredArgsConstructor
@@ -30,16 +28,26 @@ public class EventController {
 
     private final EventRepository eventRepository;
 
+    private final EventValidator eventValidator = new EventValidator();
+
+    private ModelMapper modelMapper = new ModelMapper();
+
     @PostMapping
-    public ResponseEntity createEvents(@RequestBody @Valid EventDto event, Errors errors){
+    public ResponseEntity createEvents(@RequestBody @Valid EventDto eventDto, Errors errors){
 
         if (errors.hasErrors()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
-//        Event save = eventRepository.save(event);
+        eventValidator.validate(eventDto, errors);
 
-        URI uri = linkTo(EventController.class).slash("{id}").toUri();
+        if (errors.hasErrors()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        Event event = modelMapper.map(eventDto, Event.class);
+        Event save = eventRepository.save(event);
+        URI uri = linkTo(EventController.class).slash(save.getId()).toUri();
 
         return ResponseEntity.created(uri).body(event);
     }

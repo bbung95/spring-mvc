@@ -28,7 +28,6 @@ public class EventDto {
     private LocalDateTime beginEventDateTime;
     @NotNull
     private LocalDateTime endEventDateTime;
-    @NotEmpty
     private String location; // (Optional)
     @Min(0)
     private int basePrice;                          // (Optional)
