@@ -1,12 +1,9 @@
 package com.spring.review;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
 import javax.servlet.FilterConfig;
-import javax.servlet.annotation.WebFilter;
 import java.io.IOException;
 
 @Component
