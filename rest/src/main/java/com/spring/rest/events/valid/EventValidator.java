@@ -2,12 +2,11 @@ package com.spring.rest.events.valid;
 
 import com.spring.rest.events.dto.EventDto;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 
 import java.time.LocalDateTime;
 
-@Service
+@Component
 public class EventValidator {
 
     public void validate(EventDto eventDto, Errors errors){

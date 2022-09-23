@@ -10,7 +10,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
@@ -23,7 +25,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest
+@SpringBootTest
+@AutoConfigureMockMvc
 class EventControllerTest {
 
     @Autowired
@@ -32,10 +35,8 @@ class EventControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
-    private EventRepository eventRepository;
-
     @Test
+    @DisplayName("정삭적으로 이벤트를 생성하는 테스트")
     public void createEventsTest() throws Exception {
 
         EventDto event = EventDto.builder()
@@ -49,6 +50,7 @@ class EventControllerTest {
                 .maxPrice(200)
                 .limitOfEnrollment(100)
                 .location("선릉역 위워크")
+                .eventStatus(EventStatus.DRAFT)
                 .build();
 
         mockMvc.perform(post("/api/events")
@@ -58,8 +60,10 @@ class EventControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("id").exists())
-                .andExpect(header().exists(HttpHeaders.LOCATION))
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE));
+                .andExpect(jsonPath("free").value(false))
+                .andExpect(jsonPath("offline").value(true))
+                .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()))
+        ;
     }
 
     @Test
@@ -119,8 +123,8 @@ class EventControllerTest {
                 .closeEnrollmentDateTime(LocalDateTime.of(2022, 9, 21, 12, 12))
                 .beginEnrollmentDateTime(LocalDateTime.of(2022, 9, 21, 12, 12))
                 .endEventDateTime(LocalDateTime.of(2022, 9, 21, 12, 12))
-                .basePrice(100)
-                .maxPrice(200)
+                .basePrice(200)
+                .maxPrice(1000)
                 .limitOfEnrollment(100)
                 .location("선릉역 위워크")
                 .build();
@@ -130,6 +134,12 @@ class EventControllerTest {
                         .accept(MediaTypes.HAL_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(event)))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+//                .andExpect(jsonPath("$[0].objectName").exists())
+//                .andExpect(jsonPath("$[0].filed").exists())
+//                .andExpect(jsonPath("$[0].defaultMessage").exists())
+//                .andExpect(jsonPath("$[0].code").exists())
+//                .andExpect(jsonPath("$[0].rejectedValue").exists())
+                ;
     }
 }
