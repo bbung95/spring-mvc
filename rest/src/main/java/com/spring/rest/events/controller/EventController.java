@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,6 +60,7 @@ public class EventController {
         eventEntityModel.add(linkTo(methodOn(EventController.class).createEvents(eventDto, errors)).withSelfRel());
         eventEntityModel.add(linkTo(methodOn(EventController.class).queryEvents()).withRel("query-events"));
         eventEntityModel.add(linkTo(methodOn(EventController.class).updateEvents()).withRel("update-events"));
+        eventEntityModel.add(Link.of("/docs/index.html").withRel("profile"));
 
         return ResponseEntity.created(uri).body(eventEntityModel);
     }
