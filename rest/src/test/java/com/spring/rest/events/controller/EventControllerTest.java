@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.li
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -33,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
 @Import(RestDocsConfiguration.class)
+@ActiveProfiles("test")
 class EventControllerTest {
 
     @Autowired
@@ -172,7 +175,7 @@ class EventControllerTest {
     @DisplayName("입력 값이 잘못된 경우에 에러가 발생하는 테스트")
     public void createEvent_BAD_REQUEST_WRONG_INPUT() throws Exception {
 
-        Event event = Event.builder()
+        EventDto event = EventDto.builder()
                 .name("Spring")
                 .description("Rest Api Development with Spring")
                 .beginEventDateTime(LocalDateTime.of(2022, 9, 21, 12, 12))
@@ -180,7 +183,7 @@ class EventControllerTest {
                 .beginEnrollmentDateTime(LocalDateTime.of(2022, 9, 21, 12, 12))
                 .endEventDateTime(LocalDateTime.of(2022, 9, 21, 12, 12))
                 .basePrice(200)
-                .maxPrice(1000)
+                .maxPrice(100)
                 .limitOfEnrollment(100)
                 .location("선릉역 위워크")
                 .build();
@@ -191,11 +194,12 @@ class EventControllerTest {
                         .content(objectMapper.writeValueAsString(event)))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-//                .andExpect(jsonPath("$[0].objectName").exists())
-//                .andExpect(jsonPath("$[0].filed").exists())
-//                .andExpect(jsonPath("$[0].defaultMessage").exists())
-//                .andExpect(jsonPath("$[0].code").exists())
-//                .andExpect(jsonPath("$[0].rejectedValue").exists())
+                .andExpect(jsonPath("errors[0].objectName").exists())
+                .andExpect(jsonPath("errors[0].filed").exists())
+                .andExpect(jsonPath("errors[0].defaultMessage").exists())
+                .andExpect(jsonPath("errors[0].code").exists())
+                .andExpect(jsonPath("errors[0].rejectValue").exists())
+                .andExpect(jsonPath("_links.index").exists())
                 ;
     }
 }

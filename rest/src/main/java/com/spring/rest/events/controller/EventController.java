@@ -4,6 +4,7 @@ import com.spring.rest.events.domain.Event;
 import com.spring.rest.events.dto.EventDto;
 import com.spring.rest.events.repository.EventRepository;
 import com.spring.rest.events.valid.EventValidator;
+import com.spring.rest.index.controller.IndexController;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -41,13 +42,13 @@ public class EventController {
         ModelMapper modelMapper = new ModelMapper();
 
         if (errors.hasErrors()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+            return badRequest(errors);
         }
 
         eventValidator.validate(eventDto, errors);
 
         if (errors.hasErrors()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+            return  badRequest(errors);
         }
 
         Event event = modelMapper.map(eventDto, Event.class);
@@ -63,6 +64,16 @@ public class EventController {
         eventEntityModel.add(Link.of("/docs/index.html").withRel("profile"));
 
         return ResponseEntity.created(uri).body(eventEntityModel);
+    }
+
+    private static ResponseEntity< EntityModel<Errors>> badRequest(Errors errors) {
+
+        EntityModel<Errors> errorsEntityModel = EntityModel
+                .of(errors, linkTo(methodOn(IndexController.class).index()).withRel("index"));
+
+        System.out.println("errorsEntityModel = " + errorsEntityModel);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorsEntityModel);
     }
 
     @GetMapping("query-events")
