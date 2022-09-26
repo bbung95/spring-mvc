@@ -1,4 +1,4 @@
-package com.spring.rest.events.domain;
+package com.spring.rest.domain;
 
 import com.spring.rest.events.dto.EventUpdateDto;
 import com.spring.rest.events.enums.EventStatus;
@@ -34,6 +34,9 @@ public class Event {
 
     @Enumerated(EnumType.STRING)
     private EventStatus eventStatus;
+
+    @ManyToOne
+    private Account manager;
 
     public void update() {
         if(this.basePrice == 0 && this.maxPrice == 0){

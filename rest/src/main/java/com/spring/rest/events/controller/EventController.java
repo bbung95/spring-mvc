@@ -1,6 +1,6 @@
 package com.spring.rest.events.controller;
 
-import com.spring.rest.events.domain.Event;
+import com.spring.rest.domain.Event;
 import com.spring.rest.events.dto.EventDto;
 import com.spring.rest.events.dto.EventUpdateDto;
 import com.spring.rest.events.repository.EventRepository;
@@ -8,7 +8,6 @@ import com.spring.rest.events.valid.EventValidator;
 import com.spring.rest.index.controller.IndexController;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -19,11 +18,8 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-import org.w3c.dom.events.EventTarget;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -102,7 +98,6 @@ public class EventController {
 
         // 400
         if(errors.hasErrors()){
-
             return badRequest(errors);
         }
 

@@ -1,13 +1,11 @@
 package com.spring.rest.events.domain;
 
-import junitparams.Parameters;
-import org.assertj.core.api.Assertions;
+import com.spring.rest.domain.Event;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.stream.Stream;
 

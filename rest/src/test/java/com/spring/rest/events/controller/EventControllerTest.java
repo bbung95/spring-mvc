@@ -1,32 +1,19 @@
 package com.spring.rest.events.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.rest.common.BaseControllerTest;
-import com.spring.rest.common.RestDocsConfiguration;
 import com.spring.rest.common.TestDescription;
 import com.spring.rest.events.dto.EventDto;
-import com.spring.rest.events.domain.Event;
+import com.spring.rest.domain.Event;
 import com.spring.rest.events.dto.EventUpdateDto;
 import com.spring.rest.events.enums.EventStatus;
 import com.spring.rest.events.repository.EventRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.stream.IntStream;
 
@@ -117,6 +104,7 @@ class EventControllerTest extends BaseControllerTest {
                                 fieldWithPath("free").description("it tells if this event is free or not"),
                                 fieldWithPath("offline").description("it tells if this event is offline event or not"),
                                 fieldWithPath("eventStatus").description("event status"),
+                                fieldWithPath("manager").description("manager"),
                                 fieldWithPath("_links.self.href").description("link to self"),
                                 fieldWithPath("_links.query-events.href").description("link to query events"),
                                 fieldWithPath("_links.update-events.href").description("link to update events"),
@@ -298,15 +286,14 @@ class EventControllerTest extends BaseControllerTest {
                 .maxPrice(200)
                 .limitOfEnrollment(100)
                 .location("선릉역 위워크")
-                .free(true)
-                .offline(false)
                 .eventStatus(EventStatus.PUBLISHED)
                 .build();
+
 
         mockMvc.perform(put("/api/events/1008")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaTypes.HAL_JSON_VALUE)
-                        .content(objectMapper.writeValueAsString(event)))
+                        .content(objectMapper.writeValueAsString(modelMapper.map(event, EventUpdateDto.class))))
                 .andDo(print())
                 .andExpect(status().isNotFound())
         ;
@@ -340,7 +327,7 @@ class EventControllerTest extends BaseControllerTest {
         mockMvc.perform(put("/api/events/{id}", data.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaTypes.HAL_JSON_VALUE)
-                        .content(objectMapper.writeValueAsString(data)))
+                        .content(objectMapper.writeValueAsString(modelMapper.map(data, EventUpdateDto.class))))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("update-envent"))
