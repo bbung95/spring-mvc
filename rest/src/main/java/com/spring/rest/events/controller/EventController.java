@@ -2,6 +2,7 @@ package com.spring.rest.events.controller;
 
 import com.spring.rest.events.domain.Event;
 import com.spring.rest.events.dto.EventDto;
+import com.spring.rest.events.dto.EventUpdateDto;
 import com.spring.rest.events.repository.EventRepository;
 import com.spring.rest.events.valid.EventValidator;
 import com.spring.rest.index.controller.IndexController;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.w3c.dom.events.EventTarget;
@@ -38,6 +40,8 @@ public class EventController {
     private final EventRepository eventRepository;
 
     private final EventValidator eventValidator;
+
+    private final ModelMapper modelMapper;
 
     @GetMapping
     public ResponseEntity getEventsList(Pageable page, PagedResourcesAssembler<Event> assembler){
@@ -68,8 +72,6 @@ public class EventController {
     @PostMapping
     public ResponseEntity createEvents(@RequestBody @Valid EventDto eventDto, Errors errors){
 
-        ModelMapper modelMapper = new ModelMapper();
-
         if (errors.hasErrors()){
             return badRequest(errors);
         }
@@ -77,7 +79,7 @@ public class EventController {
         eventValidator.validate(eventDto, errors);
 
         if (errors.hasErrors()){
-            return  badRequest(errors);
+            return badRequest(errors);
         }
 
         Event event = modelMapper.map(eventDto, Event.class);
@@ -93,6 +95,31 @@ public class EventController {
         eventEntityModel.add(Link.of("/docs/index.html").withRel("profile"));
 
         return ResponseEntity.created(uri).body(eventEntityModel);
+    }
+
+    @PutMapping ("{id}")
+    public ResponseEntity modifiedEvent(@PathVariable Integer id, @RequestBody @Valid EventUpdateDto eventDto, Errors errors){
+
+        // 400
+        if(errors.hasErrors()){
+
+            return badRequest(errors);
+        }
+
+        // 404
+        Optional<Event> event = eventRepository.findById(id);
+
+        if(!event.isPresent()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        event.get().dataUpdate(eventDto);
+        Event updateEvent = eventRepository.save(event.get());
+
+        EntityModel<Event> model = EntityModel.of(updateEvent);
+        model.add(Link.of("/docs/index.html").withRel("profile"));
+
+        return ResponseEntity.status(HttpStatus.OK).body(model);
     }
 
     private static ResponseEntity< EntityModel<Errors>> badRequest(Errors errors) {

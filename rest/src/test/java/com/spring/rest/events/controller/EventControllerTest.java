@@ -5,10 +5,12 @@ import com.spring.rest.common.RestDocsConfiguration;
 import com.spring.rest.common.TestDescription;
 import com.spring.rest.events.dto.EventDto;
 import com.spring.rest.events.domain.Event;
+import com.spring.rest.events.dto.EventUpdateDto;
 import com.spring.rest.events.enums.EventStatus;
 import com.spring.rest.events.repository.EventRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,12 +22,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.stream.IntStream;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
@@ -209,7 +213,7 @@ class EventControllerTest {
                 .andExpect(jsonPath("errors[0].code").exists())
                 .andExpect(jsonPath("errors[0].rejectValue").exists())
                 .andExpect(jsonPath("_links.index").exists())
-                ;
+        ;
     }
 
     @Test
@@ -242,7 +246,7 @@ class EventControllerTest {
                 .description("test event")
                 .build();
 
-       return eventRepository.save(event);
+        return eventRepository.save(event);
     }
 
     @Test
@@ -267,6 +271,90 @@ class EventControllerTest {
         mockMvc.perform(get("/api/events/1008"))
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
+        ;
+
+    }
+
+    @Test
+    @DisplayName("이벤트 수정시 잘못된 데이터를 입력하였을때 400 응답받기")
+    public void updateEventTestBadRequest() throws Exception {
+
+        Event event = generateEvent(1);
+
+        EventUpdateDto data = EventUpdateDto.builder()
+                .name(event.getName())
+                .build();
+
+        mockMvc.perform(put("/api/events/{id}", event.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaTypes.HAL_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(data)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+        ;
+    }
+
+    @Test
+    @DisplayName("이벤트 수정시 이벤트가 없는 경우 404 응답받기")
+    public void updateEventTestNotFound() throws Exception {
+
+        Event event = Event.builder()
+                .name("Spring")
+                .description("Rest Api Development with Spring")
+                .beginEventDateTime(LocalDateTime.of(2022, 9, 21, 12, 12))
+                .closeEnrollmentDateTime(LocalDateTime.of(2022, 9, 21, 12, 12))
+                .beginEnrollmentDateTime(LocalDateTime.of(2022, 9, 21, 12, 12))
+                .endEventDateTime(LocalDateTime.of(2022, 9, 21, 12, 12))
+                .basePrice(100)
+                .maxPrice(200)
+                .limitOfEnrollment(100)
+                .location("선릉역 위워크")
+                .free(true)
+                .offline(false)
+                .eventStatus(EventStatus.PUBLISHED)
+                .build();
+
+        mockMvc.perform(put("/api/events/1008")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaTypes.HAL_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(event)))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+        ;
+
+    }
+
+    @Test
+    @DisplayName("정상적으로 이벤트가 수정되었을시")
+    public void updateEventTest() throws Exception {
+
+        Event event = Event.builder()
+                .name("Spring")
+                .description("Rest Api Development with Spring")
+                .beginEventDateTime(LocalDateTime.of(2022, 9, 21, 12, 12))
+                .closeEnrollmentDateTime(LocalDateTime.of(2022, 9, 21, 12, 12))
+                .beginEnrollmentDateTime(LocalDateTime.of(2022, 9, 21, 12, 12))
+                .endEventDateTime(LocalDateTime.of(2022, 9, 21, 12, 12))
+                .basePrice(100)
+                .maxPrice(200)
+                .limitOfEnrollment(100)
+                .location("선릉역 위워크")
+                .free(true)
+                .offline(false)
+                .eventStatus(EventStatus.PUBLISHED)
+                .build();
+
+        Event data = eventRepository.save(event);
+        data.setName("Spring Update Event");
+        data.setDescription("Rest Api Development");
+
+        mockMvc.perform(put("/api/events/{id}", data.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaTypes.HAL_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(data)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("update-envent"))
         ;
 
     }

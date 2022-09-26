@@ -1,5 +1,6 @@
 package com.spring.rest.events.domain;
 
+import com.spring.rest.events.dto.EventUpdateDto;
 import com.spring.rest.events.enums.EventStatus;
 import lombok.*;
 
@@ -47,5 +48,11 @@ public class Event {
             this.offline = true;
         }
 
+    }
+
+    public void dataUpdate(EventUpdateDto eventUpdateDto){
+
+        this.name = eventUpdateDto.getName();
+        this.description = eventUpdateDto.getDescription();
     }
 }
