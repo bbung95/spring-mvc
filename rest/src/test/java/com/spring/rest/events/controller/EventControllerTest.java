@@ -1,6 +1,7 @@
 package com.spring.rest.events.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spring.rest.common.BaseControllerTest;
 import com.spring.rest.common.RestDocsConfiguration;
 import com.spring.rest.common.TestDescription;
 import com.spring.rest.events.dto.EventDto;
@@ -40,19 +41,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@AutoConfigureRestDocs
-@Import(RestDocsConfiguration.class)
-@Transactional
-@ActiveProfiles("test")
-class EventControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+class EventControllerTest extends BaseControllerTest {
 
     @Autowired
     private EventRepository eventRepository;

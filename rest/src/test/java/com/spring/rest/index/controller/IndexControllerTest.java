@@ -1,5 +1,6 @@
 package com.spring.rest.index.controller;
 
+import com.spring.rest.common.BaseControllerTest;
 import com.spring.rest.common.RestDocsConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@AutoConfigureRestDocs
-@Import(RestDocsConfiguration.class)
-@ActiveProfiles("test")
-class IndexControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
+class IndexControllerTest extends BaseControllerTest {
 
     @Test
     public void index() throws Exception {
