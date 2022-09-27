@@ -1,7 +1,10 @@
 package com.spring.rest.events.controller;
 
+import com.spring.rest.account.enums.AccountRole;
+import com.spring.rest.account.service.AccountService;
 import com.spring.rest.common.BaseControllerTest;
 import com.spring.rest.common.TestDescription;
+import com.spring.rest.domain.Account;
 import com.spring.rest.events.dto.EventDto;
 import com.spring.rest.domain.Event;
 import com.spring.rest.events.dto.EventUpdateDto;
@@ -13,10 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.IntStream;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
@@ -330,8 +337,9 @@ class EventControllerTest extends BaseControllerTest {
                         .content(objectMapper.writeValueAsString(modelMapper.map(data, EventUpdateDto.class))))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andDo(document("update-envent"))
+                .andDo(document("update-event"))
         ;
 
     }
+
 }
