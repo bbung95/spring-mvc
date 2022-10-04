@@ -19,13 +19,15 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
 
         String message = null;
+        int statusCode = 400;
 
         if(authException instanceof UsernameNotFoundException){
             message = authException.getMessage();
         }else{
             message = "UnAuthorize";
+            statusCode = 401;
         }
 
-        response.sendError(400, message);
+        response.sendError(statusCode, message);
     }
 }

@@ -36,7 +36,5 @@ public class EventDto {
     @Min(0)
     private int limitOfEnrollment;
 
-    @Enumerated(EnumType.STRING)
     private EventStatus eventStatus;
-
 }

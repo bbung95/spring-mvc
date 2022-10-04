@@ -1,4 +1,4 @@
-package com.spring.rest.account;
+package com.spring.rest.account.controller;
 
 import com.spring.rest.account.service.AccountService;
 import com.spring.rest.domain.Account;
@@ -27,11 +27,12 @@ public class AccountController {
     @PostMapping
     public ResponseEntity tokenLogin(@RequestBody Account account){
 
+        System.out.println("tokenLogin = " + account);
+
         Account findAccount = accountService.userEmailAndPasswordCheck(account.getEmail(), account.getPassword());
         String token = jwtTokenUtil.successfulAuthentication(findAccount);
-        User user = new User(findAccount.getEmail(), findAccount.getPassword(), findAccount.getAuthorities());
-        new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 
+        User user = new User(findAccount.getEmail(), findAccount.getPassword(), findAccount.getAuthorities());
         SecurityContextHolder.getContext()
                 .setAuthentication(new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities()));
 

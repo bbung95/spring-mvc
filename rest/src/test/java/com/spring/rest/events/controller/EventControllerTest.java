@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
@@ -244,7 +243,31 @@ class EventControllerTest extends BaseControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("_links.self").exists())
                 .andExpect(jsonPath("_links.profile").exists())
-                .andDo(document("get-an-event"))
+                .andDo(document("get-event",
+                        links(
+                                linkWithRel("self").description("link to self"),
+                                linkWithRel("profile").description("link to profile")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").description("Id of find event"),
+                                fieldWithPath("name").description("Name of find event"),
+                                fieldWithPath("description").description("Description of find event"),
+                                fieldWithPath("beginEnrollmentDateTime").description("BeginEnrollmentDateTime of find data"),
+                                fieldWithPath("closeEnrollmentDateTime").description("CloseEnrollmentDateTime of find event"),
+                                fieldWithPath("beginEventDateTime").description("BeginEventDateTime of find event"),
+                                fieldWithPath("endEventDateTime").description("EndEventDateTime of find event"),
+                                fieldWithPath("location").description("Location of find event"),
+                                fieldWithPath("basePrice").description("BasePrice of find event"),
+                                fieldWithPath("maxPrice").description("MaxPrice of find event"),
+                                fieldWithPath("limitOfEnrollment").description("LimitOfEnrollment of find event"),
+                                fieldWithPath("offline").description("Offline of find event"),
+                                fieldWithPath("free").description("Free of find event"),
+                                fieldWithPath("eventStatus").description("EventStatus of find event"),
+                                fieldWithPath("manager").description("Manager of find event"),
+                                fieldWithPath("_links.self.href").description("link to self"),
+                                fieldWithPath("_links.profile.href").description("link to profile")
+                        ))
+                )
         ;
     }
 

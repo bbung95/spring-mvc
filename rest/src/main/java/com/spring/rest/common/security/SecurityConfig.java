@@ -2,6 +2,7 @@ package com.spring.rest.common.security;
 
 import com.spring.rest.account.service.AccountService;
 import com.spring.rest.common.security.auth.JwtAuthenticationEntryPoint;
+//import com.spring.rest.common.security.auth.JwtAuthenticationFilter;
 import com.spring.rest.common.security.auth.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -33,9 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        // security 적용되지 않도록 설정
-        // rest docs path 설정
-        web.ignoring().mvcMatchers("/docs/index.html");
+
         // static path 설정
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
@@ -46,14 +45,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         http.csrf().disable()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
                 .httpBasic().disable()
                 .formLogin().disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-            .and()
+                .and()
                 .authorizeRequests()
-                .antMatchers("/docs/index.html", "/api/authenticate").permitAll()
-//                .antMatchers(HttpMethod.GET, "/api/**").authenticated()
+                .antMatchers("/docs/index.html", "/api/authenticate", "/api/events", "/api/basic-auth").permitAll()
                 .anyRequest().authenticated();
     }
 }

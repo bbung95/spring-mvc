@@ -16,11 +16,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -29,12 +27,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AccountService accountService;
 
     private static final List<String> EXCLUDE_URL = Collections.unmodifiableList(
-                                                Arrays.asList("/api/authenticate", "/docs/index.html"));
+                                                Arrays.asList("/api/authenticate", "/docs/index.html", "/api/events", "/api/basic-auth"));
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         System.out.println("인증이나 권한이 필요한 주소 요청이 됨.");
+        System.out.println(request.getRequestURL());
 
         String jwtHeader = request.getHeader("Authorization");
         System.out.println("jwtHeader = " + jwtHeader);
@@ -53,12 +52,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             ///////////
 
             username = JWT.require(Algorithm.HMAC512("pass")).build().verify(token).getClaim("username").asString();
-            System.out.println("username = " + username);
         }
 
         // JWT 토큰을 검증을 해서 정상적인 사용자인지 확인
 
-        if(username != null && SecurityContextHolder.getContext().getAuthentication() != null){
+        if(username != null){
 
             System.out.println("username 정상");
             UserDetails userDetails = accountService.loadUserByUsername(username);
@@ -68,6 +66,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // 강제로 시큐리티의 세션에 접근하여 Authentication 객체를 저장.
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
         }
 
         filterChain.doFilter(request, response);
@@ -77,8 +76,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         // Filter 제외 PATH 추가
 
-        System.out.println("Filter 제외 URL");
-        System.out.println(request.getServletPath());
         return EXCLUDE_URL.stream().anyMatch(item -> item.equalsIgnoreCase(request.getServletPath()));
     }
 }

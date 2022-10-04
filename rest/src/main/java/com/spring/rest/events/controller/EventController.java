@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -66,7 +67,7 @@ public class EventController {
     }
 
     @PostMapping
-    public ResponseEntity createEvents(@RequestBody @Valid EventDto eventDto, Errors errors){
+    public ResponseEntity createEvents(@RequestBody @Validated EventDto eventDto, Errors errors){
 
         if (errors.hasErrors()){
             return badRequest(errors);
